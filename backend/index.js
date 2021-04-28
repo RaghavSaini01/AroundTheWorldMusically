@@ -19,7 +19,8 @@ db.connect(function(err){
     } else {
         console.log("Error trying to connect");    
     }
-}); 
+});
+
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -45,8 +46,7 @@ app.post("/api/insert", (require, response) => {
 
 app.post("/api/findArtistGenre", (require, response) => {
     const artistName = require.body.artistName;
-
-    const sqlFind = "SELECT `Genre_name` FROM `Artist` WHERE `Artist_name`= ?";
+    const sqlFind = "SELECT Song.Song_name, temp.Valance, SongAttributes.Valance FROM (SELECT Valance,Song_name from SongAttributes Where Song_name=?) as temp,Song,SongAttributes Where Song.Song_name = SongAttributes.Song_name AND Song.Song_name <> temp.Song_name AND (temp.Valance = SongAttributes.Valance) LIMIT 10";
     db.query(sqlFind, artistName, (err, result) => {
         response.send(result);
     })
@@ -77,4 +77,3 @@ app.put("/api/update/", (require, response) => {
  app.listen(3005, () => {
     console.log("running on port 3005");
 })
-
